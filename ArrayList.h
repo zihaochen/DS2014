@@ -4,7 +4,7 @@
 #include "IndexOutOfBound.h"
 #include "ElementNotExist.h"
 #include <iostream>
-#define debug cout<<"not here"
+#define debug cout<<"not here\n"
 using namespace std;
 
 template <class T>
@@ -88,7 +88,7 @@ public:
         currentLength = x.currentLength;
         for (int i = 0; i < currentLength; i++)
             elem[i] = x.elem[i];
-        return *this;
+        return (*this);
     }
 
     bool add(const T & e)
@@ -125,6 +125,12 @@ public:
     }
 
     const T& get(int index) const
+    {
+        if (!(index >= 0 && index < currentLength)) throw IndexOutOfBound();
+        return elem[index];
+    }
+
+    T& getForChange(int index)
     {
         if (!(index >= 0 && index < currentLength)) throw IndexOutOfBound();
         return elem[index];
