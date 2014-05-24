@@ -133,9 +133,9 @@ public:
 
     void addLast(const T &e)
     {
-        if ((rear + 1) % maxSize == first) doubleSpace();
         rear = (rear + 1) % maxSize;
         elem[rear] = e;
+        if (rear == first) doubleSpace();
     }
 
     bool contains(const T& e) const
@@ -182,8 +182,7 @@ public:
 
     const T& get(int index) const
     {
-        int length = (rear - (first + 1) + maxSize) % maxSize;
-        if (index > length || index < 0) throw IndexOutOfBound();
+        if (index >= size() || index < 0) throw IndexOutOfBound();
         return elem[((first + 1 + index) % maxSize)];
     }
 
@@ -203,12 +202,10 @@ public:
     {
         T *tmp = elem;
         elem = new T[maxSize *2];
-        for (int i = 1; i < maxSize; i++)
+        for (int i = 1; i <= maxSize; i++)
             elem[i] = tmp[(first + i) % maxSize];
-        int preFirst = first;
-        int preRear = rear;
         first = 0;
-        rear = (preRear - preFirst + maxSize) % maxSize;
+        rear = maxSize;
         maxSize *= 2;
         delete tmp;
     }
