@@ -235,6 +235,7 @@ public:
 		nullnode = new Entry();
 		nullnode -> Size = 0;
         root = copy(x.root, x.nullnode);
+        return *this;
 	}
 
 	TreeMap(const TreeMap &x)
