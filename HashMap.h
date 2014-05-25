@@ -61,8 +61,8 @@ private:
 		h ^= (h >> 20) ^ (h >> 12);
 		return ((h^(h >> 7) ^ (h >> 4)) & ((1 << 20) - 1));
 	}
-
 	void reSize()
+
 	{
 		int size0 = Size;
 		if (2 * Size >= (1 << 20))
@@ -167,11 +167,12 @@ public:
 			elem[i] = new Entry();
 			Entry *tmp1, *tmp2;
 			tmp2 = x.elem[i];
+			assert(tmp2);
 			tmp1 = elem[i];
 			while (tmp2 -> next != NULL)
 			{
 				tmp1 -> next = new Entry(tmp2 -> next -> getKey(), tmp2 -> next -> getValue());
-				tmp2 = tmp2 -> next;assert(tmp2);
+				tmp2 = tmp2 -> next;
 				tmp1 = tmp1 -> next;
 			}
 		}
@@ -190,6 +191,7 @@ public:
 				delete tmp2;
 				tmp2 = NULL;
 			}
+			elem[i]->next = NULL;
 		}
 		num = 0;
 	}
@@ -258,6 +260,7 @@ public:
 			Entry *tmp2 = tmp -> next;
 			tmp -> next = tmp2 -> next;
 			delete tmp2;
+			tmp2 = NULL;
 		}
 		num--;
 
