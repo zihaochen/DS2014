@@ -22,6 +22,7 @@ private:
             elem[i] = tmp[i];
         maxSize = 2 * maxSize;
         delete []tmp;
+        tmp = NULL;
     }
 public:
  class Iterator
@@ -69,6 +70,8 @@ public:
     {
        // delete []elem;
        clear();
+       delete [] elem;
+       elem = NULL;
     }
 
     ArrayList(const ArrayList &x)
@@ -111,10 +114,9 @@ public:
 
     void clear()
     {
-        if (elem == NULL) return;
         currentLength = 0;
-        delete []elem;
-        elem = NULL;
+        //delete []elem;
+        //elem = NULL;
     }
 
     bool contains(const T& e) const

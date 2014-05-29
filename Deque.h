@@ -172,11 +172,13 @@ public:
 
     void removeFirst()
     {
+        if (size() == 0) throw ElementNotExist();
         first = (first + 1) % maxSize;
     }
 
     void removeLast()
     {
+        if (size() == 0) throw ElementNotExist();
         rear = (rear - 1 + maxSize) % maxSize;
     }
 

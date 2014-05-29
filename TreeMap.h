@@ -90,7 +90,7 @@ private:
 	{
 	    if (i == nullnode) throw ElementNotExist();
 		if (x < i -> getKey() ) remove(x, i -> left);
-		if (x > i -> getKey() ) remove(x, i -> right);
+		if (i -> getKey() < x) remove(x, i -> right);
 		if (x == i -> getKey())
 		{
 			if (i -> left == nullnode && i -> right == nullnode)
@@ -157,7 +157,7 @@ private:
 	{
 		if (i == nullnode) return 0;
 		if (i -> getKey() == x) return 1;
-		else if (i -> getKey() > x) return findKey(x, i -> left);
+		else if (x < i -> getKey()) return findKey(x, i -> left);
 		else return findKey(x, i -> right);
 	}
 
@@ -166,8 +166,8 @@ private:
 		if (x == i -> getKey()) return i -> getValue();
 		if (x < i -> getKey() && i -> left != nullnode) return get(x, i -> left);
 		if (x < i -> getKey() && i -> left == nullnode) throw ElementNotExist();
-		if (x > i -> getKey() && i -> right != nullnode) return get(x, i -> right);
-		if (x > i -> getKey() && i -> right == nullnode) throw ElementNotExist();
+		if (i -> getKey() < x && i -> right != nullnode) return get(x, i -> right);
+		if (i -> getKey() < x && i -> right == nullnode) throw ElementNotExist();
 	}
 
 	bool findValue(V x, Entry *i) const

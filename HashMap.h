@@ -58,15 +58,16 @@ private:
 	int reHash(const K& x) const
 	{
 		int h = H::hashCode(x);
-		h ^= (h >> 20) ^ (h >> 12);
-		return ((h^(h >> 7) ^ (h >> 4)) & ((1 << 20) - 1));
+		//h ^= (h >> 20) ^ (h >> 12);
+		h = (h % 999983 + 999983) % 999983;
+		return h;
 	}
 	void reSize()
 
 	{
 		int size0 = Size;
-		if (2 * Size >= (1 << 20))
-            Size = 1 << 20;
+		if (2 * Size >= 999983)
+            Size = 999983;
         else Size *= 2;
 		Entry ** tmp = elem;
 		elem = new Entry*[Size];
@@ -233,7 +234,7 @@ public:
 	void put(const K & key, const V &value)
 	{
 		int loc = reHash(key);
-		while (loc + loc / 2 > Size && Size < (1 << 20)) reSize();
+		while (loc + loc / 2 > Size && Size < (999983)) reSize();
 		Entry *tmp = elem[loc] -> next;
 		while (tmp != NULL && tmp -> getKey() != key)
 			tmp = tmp -> next;

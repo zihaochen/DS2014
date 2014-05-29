@@ -5,6 +5,8 @@
 #include "ElementNotExist.h"
 #include "PriorityQueue.h"
 #include <iostream>
+#include <stdio.h>
+#define debug cout<<"not here\n"
 using namespace std;
 
 template <class V, class C = less<V> >
@@ -30,10 +32,12 @@ public:
     class Iterator
     {
     private:
+        C cmp;
+        ArrayList<V> change;
         PriorityQueue *location;
-        PriorityQueue *tmp;
+        int *f1; // iterator array -> heap
+        int *f2; // heap -> iterator array
         int cur;
-        int cnt; // for remove
         int preSize;
         bool last;
     public:
@@ -41,8 +45,12 @@ public:
         {
             cur = 0;
             last = 0;
-            cnt = 0;
             preSize = location -> elem.size();
+            f1 = new int [preSize];
+            f2 = new int [preSize];
+            for (int i = 0; i < preSize; i++)
+                f1[i] = f2[i] = i;
+            change = location -> elem;
         }
 
         bool hasNext()
@@ -52,17 +60,59 @@ public:
 
         const V &next()
         {
+            if (!hasNext()) throw ElementNotExist();
             cur ++;
             last = 1;
-            return location -> elem.get(cur - 1 - cnt);
+            return change.get(cur - 1);
         }
 
         void remove()
         {
             if (last == 0) throw ElementNotExist();
-            location -> elem.removeIndex(cur - 1 - cnt);
-            cnt++;
             last = 0;
+            cut(f1[cur - 1]);
+        }
+
+        void cut(int i)
+        {
+            if (i == location -> size() - 1)
+            {
+                 location -> elem.removeIndex(location -> size() - 1);
+                 return;
+            }
+            swap(location -> elem.getForChange(i),location -> elem.getForChange(location -> size() - 1));
+            swap(f1[f2[i]],f1[f2[location -> size() - 1]]);
+            swap(f2[i],f2[location -> size() - 1]);
+            location -> elem.removeIndex(location -> size() - 1);
+          //  printf("%d  %d\n",location -> elem.get(i),location -> elem.get((i - 1) /2));
+            while (i > 0 && cmp(location -> elem.get(i),location -> elem.get((i - 1) / 2)))
+                {
+                    swap(location -> elem.getForChange(i), location -> elem.getForChange((i - 1) / 2));
+                    swap(f1[f2[i]],f1[f2[(i - 1) / 2]]);
+                    swap(f2[i], f2[(i - 1) / 2]);
+                    i = (i - 1) / 2;
+                }
+            int child;
+            for (; (2 * i + 1) < location -> elem.size(); i = child)
+            {
+                child = 2 * i + 1;
+                if ((child + 1) < location -> elem.size() && cmp(location -> elem.getForChange(child + 1),location -> elem.getForChange(child)))
+                    child++;
+                if (cmp(location -> elem.getForChange(child), location -> elem.getForChange(i)))
+                {
+                    swap(location -> elem.getForChange(child), location -> elem.getForChange(i));
+                    swap(f1[f2[child]],f1[f2[i]]);
+                    swap(f2[child],f2[i]);
+                }
+                else break;
+            }
+
+        }
+
+        ~Iterator()
+        {
+            delete [] f1;
+            delete [] f2;
         }
     };
 
@@ -94,6 +144,7 @@ public:
 
 	const V &front() const
 	{
+	    if (size() == 0) throw ElementNotExist();
 		return elem.get(0);
 	}
 
@@ -106,16 +157,20 @@ public:
 	{
 		elem.add(value);
 		int i = elem.size() - 1;
-		while (cmp(elem.getForChange(i), elem.getForChange((i - 1) / 2)))
+		while (cmp(elem.getForChange(i), elem.getForChange((i - 1) / 2)) && i > 0)
+        {
 			swap(elem.getForChange(i), elem.getForChange((i - 1) / 2));
+			i = (i - 1) / 2;
+        }
 	}
 
 	void pop()
 	{
+	    if (size() == 0) throw ElementNotExist();
 		swap(elem.getForChange(0),elem.getForChange(elem.size() - 1));
 		elem.removeIndex(elem.size() - 1);
 		down(0);
-	} // question: how to reduce to O(log n)??
+	}
 
 	int size() const
 	{

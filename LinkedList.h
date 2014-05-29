@@ -58,12 +58,12 @@ class LinkedList
             {
                 if (last == false) throw ElementNotExist();
                 last = false;
-                node *tmp = cur;
+                //node *tmp = cur;
                 node *tmp2 = cur -> pre;
                 if (cur -> next != NULL)
                     cur -> next -> pre = cur -> pre;
                 cur -> pre -> next = cur -> next;
-                delete tmp;
+                delete cur;
                 cur = tmp2;
                 location -> Size--;
             }
@@ -127,6 +127,8 @@ class LinkedList
 			node *tmp = new node(elem, head);
 			if (head -> next != NULL)
 				head -> next -> pre = tmp;
+            else
+                tail = tmp;
             tmp -> next = head -> next;
 			head -> next = tmp;
             Size++;
@@ -139,6 +141,7 @@ class LinkedList
 
 		void add(int index, const T& element)
 		{
+		    if (!(index >= 0 && index <= Size)) throw ElementNotExist();
 			node *tmp = head;
 			int len = 0;
 			while (len < index && tmp -> next != NULL)
@@ -146,7 +149,6 @@ class LinkedList
 				tmp = tmp -> next;
 				len++;
 			}
-			if (len < index) throw IndexOutOfBound();
 			node *n = new node(element, tmp);
 			if (tmp -> next != NULL)
 				tmp -> next -> pre = n;
@@ -159,14 +161,15 @@ class LinkedList
 		void clear()
 		{
 			node *tmp1, *tmp2;
-			tmp1 = head;
-			while  (tmp1 -> next !=  NULL)
+			tmp1 = head -> next;
+			while  (tmp1 !=  NULL)
 			{
 				tmp2 = tmp1 -> next;
 				delete tmp1;
 				tmp1 = tmp2;
 			}
 			head -> next = NULL;
+			tail = head;
 			Size = 0;
 		}
 
@@ -183,15 +186,14 @@ class LinkedList
 
 		const T& get(int index) const
 		{
-			node *tmp = head;
-			int len = -1;
-			while (len < index && tmp != NULL)
-			{
-				tmp = tmp -> next;
-				len++;
-			}
-			if (tmp == NULL || index < 0) throw IndexOutOfBound();
-			if (len == index) return (tmp -> data);
+		    if (!(index >= 0 && index < Size)) throw IndexOutOfBound();
+            node *tmp = head -> next;
+            while (index > 0)
+            {
+                tmp = tmp -> next;
+                index--;
+            }
+            return tmp -> data;
 		}
 
 		const T& getFirst() const
@@ -213,6 +215,8 @@ class LinkedList
 
 		void removeIndex(int index)
 		{
+		    if (!(index >= 0 && index < Size))
+                throw IndexOutOfBound();
 			node *tmp = head;
 			int len = -1;
 			while (len < index && tmp != NULL)
@@ -220,7 +224,6 @@ class LinkedList
                 tmp = tmp -> next;
                 len++;
             }
-			if (tmp == NULL || index < 0) throw IndexOutOfBound();
 			tmp -> pre -> next = tmp -> next;
 			if (tmp -> next != NULL) tmp -> next -> pre = tmp -> pre;
 			if (index == Size - 1) tail = tmp -> pre;
@@ -248,7 +251,7 @@ class LinkedList
 		void removeFirst()
 		{
 			node *tmp = head -> next;
-			if (head -> next == NULL) throw ElementNotExist();
+			if (tmp == NULL) throw ElementNotExist();
 			head -> next = tmp -> next;
 			if (tmp -> next != NULL)
 				tmp -> next -> pre = head;
@@ -270,6 +273,8 @@ class LinkedList
 
 		void set(int index, const T &element)
 		{
+		    if (!(index >= 0 && index < Size))
+                throw IndexOutOfBound();
 			node *tmp = head;
 			int len = -1;
 			while (len < index && tmp != NULL)
@@ -277,7 +282,6 @@ class LinkedList
 				tmp = tmp -> next;
 				len++;
 			}
-			if (tmp == NULL ||index < 0) throw IndexOutOfBound();
 			tmp -> data = element;
 		}
 
