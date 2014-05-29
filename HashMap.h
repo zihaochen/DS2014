@@ -76,6 +76,7 @@ private:
 			if (i < size0) elem[i] = tmp[i];
 			else elem[i] = new Entry();
 		}
+		delete []tmp;
 	}
 
 public:
@@ -123,7 +124,7 @@ public:
 	HashMap()
 	{
 		num = 0;
-		Size = 10;
+		Size = 1000;
 		elem = new Entry *[Size];
 		for (int i = 0; i < Size; i++)
 			elem[i] = new Entry();
@@ -132,12 +133,16 @@ public:
 	~HashMap()
 	{
         clear();
+        for (int i = 0;i < Size;i++)
+            delete elem[i];
 		delete []elem;
 	}
 
 	HashMap &operator=(const HashMap &x)
 	{
 		clear();
+		for (int i = 0;i < Size;i++)
+            delete elem[i];
 		delete [] elem;
         num = x.num;
 		Size = x.Size;
